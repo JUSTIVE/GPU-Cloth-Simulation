@@ -1,0 +1,147 @@
+﻿#pragma kernel NodeUpdate
+
+StructuredBuffer<float4> Position;
+RWStructuredBuffer<float4> PositionTemp;
+RWStructuredBuffer<float4> prevPosition;
+StructuredBuffer<float4> Velocity;
+RWStructuredBuffer<float4> VelocityTemp;
+StructuredBuffer<float4> trsMatrix;
+uint vertexColumn;
+uint vertexRow;
+float RestLengthHoriz;
+float RestLengthVert;
+float RestLengthDiag;
+
+float4 ExeternalForce;
+float SpringK;
+float DampingConst;
+float DeltaT;
+float DeltaT2;
+float nodeMass;
+float structualConstraint;
+float shearConstraint;
+float structualConstraint1;
+float shearConstraint1;
+
+[numthreads(8, 8, 1)]
+void NodeUpdate(uint3 id : SV_DispatchThreadID)
+{
+    float4x4 trs = float4x4(trsMatrix[0], trsMatrix[1], trsMatrix[2], trsMatrix[3]);
+    const uint3 nParticles = uint3(vertexColumn, vertexRow, 1);
+    const float vertexes = vertexColumn * vertexRow;
+
+    float3 Gravity = float3(0, -9.80665f, 0);
+	
+    const uint idx = mad(id.y, vertexColumn, id.x);
+    const float3 p = float3(Position[idx].xyz);
+    const float3 v = float3(Velocity[idx].xyz);
+    float3 delP,delV,norDx;
+	float s, d,dist;
+    float3 force = 0;
+
+    if (idx == 1 || idx == vertexColumn - 1)
+    {
+        PositionTemp[idx] = mul(trs, float4(p, 1.0f));
+        return;
+    }
+
+    force = Gravity * nodeMass;
+    if (id.y < nParticles.y - (uint) 1)
+    {
+        delP = Position[idx + nParticles.x].xyz - p; //position dx //force Direction 
+		dist = length(delP);
+		delV = (Velocity[idx + nParticles.x].xyz - v);
+		norDx = delP / dist;
+		s = SpringK *(dist - RestLengthVert);
+		d = dot((delV), delP) / dist*DampingConst;
+		force += (s + d)*norDx;
+    }
+	// Below
+    if (id.y > (uint) 0)
+    {
+		delP = Position[idx - nParticles.x].xyz - p; //position dx //force Direction 
+		dist = length(delP);
+		delV = (Velocity[idx - nParticles.x].xyz - v);
+		norDx = delP / dist;
+		s = SpringK *(dist - RestLengthVert);
+		d = dot((delV), delP) / dist*DampingConst;
+		force += (s + d)*norDx;
+    }
+	// Left
+    if (id.x > (uint) 0)
+    {
+		delP = Position[idx - (uint) 1].xyz - p; //position dx //force Direction 
+		dist = length(delP);
+		delV = (Velocity[idx - (uint) 1].xyz - v);
+		norDx = delP / dist;
+		s = SpringK *(dist - RestLengthVert);
+		d = dot((delV), delP) / dist*DampingConst;
+        force += (s + d)*norDx;
+    }
+	// Right
+    if (id.x < nParticles.x - (uint) 1)
+    {
+		delP = Position[idx + (uint) 1].xyz - p; //position dx //force Direction 
+		dist = length(delP);
+		delV = (Velocity[idx + (uint) 1].xyz - v);
+		norDx = delP / dist;
+		s = SpringK *(dist - RestLengthVert);
+		d = dot((delV), delP) / dist*DampingConst;
+		force += (s + d)*norDx;
+    }
+
+	// Diagonals
+	// Upper-left
+    if (id.x > (uint) 0 && id.y < nParticles.y - (uint) 1)
+    {
+		delP = Position[idx + nParticles.x - (uint) 1].xyz - p; //position dx //force Direction 
+		dist = length(delP);
+		delV = (Velocity[idx + nParticles.x - (uint) 1].xyz - v);
+		norDx = delP / dist;
+		s = SpringK *(dist - RestLengthDiag);
+		d = dot((delV), delP) / dist*DampingConst;
+		force += (s + d)*norDx;
+    }
+	// Upper-right
+    if (id.x < nParticles.x - (uint) 1 && id.y < nParticles.y - (uint) 1)
+    {
+		delP = Position[idx + nParticles.x + (uint) 1].xyz - p; //position dx //force Direction 
+		dist = length(delP);
+		delV = (Velocity[idx + nParticles.x + (uint) 1].xyz - v);
+		norDx = delP / dist;
+		s = SpringK *(dist - RestLengthDiag);
+		d = dot((delV), delP) / dist*DampingConst;
+		force += (s + d)*norDx;
+    }
+	// lower -left
+    if (id.x > (uint) 0 && id.y > (uint) 0)
+    {
+		delP = Position[idx - nParticles.x - (uint) 1].xyz - p; //position dx //force Direction 
+		dist = length(delP);
+		delV = (Velocity[idx - nParticles.x - (uint) 1].xyz - v);
+		norDx = delP / dist;
+		s = SpringK *(dist - RestLengthDiag);
+		d = dot((delV), delP) / dist*DampingConst;
+		force += (s + d)*norDx;
+    }
+	// lower-right
+    if (id.x < nParticles.x - (uint) 1 && id.y > (uint) 0)
+    {
+		delP = Position[idx - nParticles.x + (uint) 1].xyz - p; //position dx //force Direction 
+		dist = length(delP);
+		delV = (Velocity[idx - nParticles.x + (uint) 1].xyz - v);
+		norDx = delP / dist;
+		s = SpringK *(dist - RestLengthDiag);
+		d = dot((delV), delP) / dist*DampingConst;
+		force += (s + d)*norDx;
+    } 
+	float3 a = (force / nodeMass)+ExeternalForce.xyz;
+    VelocityTemp[idx] = float4(v + a * DeltaT, 0.0f);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+    //float3 K1_Pos = v.xyz; //VelocityTemp[idx].xyz;
+    float3 K2_Pos = ((0.5f * DeltaT) * v.xyz) * DeltaT;
+    float3 K3_Pos = ((0.5f * DeltaT) * K2_Pos) * DeltaT;
+    float3 K4_Pos = ((p) + DeltaT * K3_Pos) * DeltaT;
+    
+    PositionTemp[idx] = mul(trs, float4(p + (0.166666f * (v.xyz + 2 * (K2_Pos + K3_Pos) + K4_Pos)) * DeltaT, 1.0f));
+    prevPosition[idx] = mul(trs, float4(p, 1.0f));
+}

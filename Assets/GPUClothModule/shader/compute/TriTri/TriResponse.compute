@@ -1,0 +1,35 @@
+﻿#pragma kernel TriCollisionResponseShader
+RWStructuredBuffer<float4> WorldPosition;
+StructuredBuffer<float4> PositionTemp;
+RWStructuredBuffer<float4> Position;
+StructuredBuffer<float4> PrevPosition;
+
+RWStructuredBuffer<float4> Velocity;
+RWStructuredBuffer<float4> VelocityTemp;
+
+StructuredBuffer<float4> trsMatrix;
+
+int vertexColumn;
+int vertexRow;
+float DeltaT;
+
+[numthreads(16,16,1)]
+void TriCollisionResponseShader(uint3 id : SV_DispatchThreadID)
+{
+    float4x4 trsInv = float4x4(trsMatrix[4], trsMatrix[5], trsMatrix[6], trsMatrix[7]);
+    //float damper2 = -0.996f;
+    float damper = -1;
+    const uint idx = mad(id.y, vertexColumn, id.x);
+    WorldPosition[idx] = PositionTemp[idx];
+
+    
+    ////for floor collision-response
+    //if (WorldPosition[idx].y < 0.005f)
+    //{
+    //    WorldPosition[idx].y = 0.0055f;
+    //    VelocityTemp[idx].y *= 0.96f * DeltaT;
+    //}
+    //multiply inverse TRS matrix for upcoming frame
+    Position[idx] = mul(trsInv, WorldPosition[idx]);
+    Velocity[idx] = VelocityTemp[idx];
+}

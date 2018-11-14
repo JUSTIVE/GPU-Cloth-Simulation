@@ -1,0 +1,71 @@
+﻿#pragma kernel NORM
+
+StructuredBuffer<float4> Pos;
+RWStructuredBuffer<float4> Nor;
+
+StructuredBuffer<float4> trsMatrix;
+
+uint vertexColumn;
+uint vertexRow;
+
+[numthreads(8,8,1)]
+void NORM(uint3 id : SV_DispatchThreadID)
+{
+    float4x4 trs = float4x4(trsMatrix[0], trsMatrix[1], trsMatrix[2], trsMatrix[3]);
+	uint3 nParticles = uint3(vertexColumn, vertexRow, 1);
+    uint idx = id.y * vertexColumn + id.x;
+
+    float3 p = (Pos[idx].xyz);
+    float3 n = float3(0,0,0);
+    float3 a, b, c;
+    float summer = 0;
+
+    float3 temppos = mul(trs, float4(p,0.0f)).xyz;
+
+    if (id.y < nParticles.y - (uint) 1)
+    {
+        c = Pos[idx + nParticles.x].xyz - temppos; //아래줄의 노드에서 현재노드의 위치를 뺀 벡터
+
+        if (id.x < nParticles.x - 1)//가장 오른쪽 끝 노드가 아니라면 4사분면 계산
+        {
+            a = Pos[idx + (uint) 1].xyz - temppos; //다음 노드와 현재노드의 위치를 뺀 벡터
+            b = Pos[idx + (uint) +1 + vertexColumn].xyz - temppos; //아래줄에서 하나를 더한 노드에서 자신을 뺀 벡터
+            n += cross(a, c);
+            n += cross(b, c);
+            summer += 2;
+        }
+        else if (id.x > (uint) 0)//가장 왼쪽노드가 아니라면 3사분면 계산
+        {
+            a = c;
+            b = Pos[idx + nParticles.x - (uint) 1].xyz - temppos;
+            c = Pos[idx - (uint) 1].xyz - temppos;
+            n += cross(a, c);
+            n += cross(b, c);
+            summer += 2;
+        }
+    }
+
+    if (id.y > (uint) 0)
+    {
+        c = Pos[idx - nParticles.x].xyz - temppos;
+        if (id.x > (uint) 0)//가장 왼쪽 노드가 아닌 경우 2사분면 계산
+        {
+            a = Pos[idx - (uint) 1].xyz - temppos;
+            b = Pos[idx - nParticles.x - (uint) 1].xyz - temppos;
+            n += cross(a, c);
+            n += cross(b, c);
+            summer += 2;
+        }
+        else if (id.x < nParticles.x - (uint) 1)//가장 왼쪽 노드가 아닌 경우 1사분면 계산
+        {
+            a = c;
+            b = Pos[idx - nParticles.x + (uint) 1].xyz - temppos;
+            c = Pos[idx + (uint) 1].xyz - temppos;
+            n += cross(a, c);
+            n += cross(b, c);
+            summer += 2;
+        }
+        n /= summer;
+    }
+    Nor[idx] = float4(normalize(n), 0.0);
+}

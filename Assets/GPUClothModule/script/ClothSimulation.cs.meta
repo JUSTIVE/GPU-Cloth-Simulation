@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 31761b3c972deaf4bbb83777e0a941b7
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - nodeUpdateComputeShader: {fileID: 7200000, guid: b163fb234904e7a49ae1b022489b6ec5,
+      type: 3}
+  - triCollisionResponseComputeShader: {fileID: 7200000, guid: 9db7add02872c764badd8365cc7e1fdf,
+      type: 3}
+  - normalComputeShader: {fileID: 7200000, guid: 8c1bffc03f862e6469e5a0a7e95b9797,
+      type: 3}
+  executionOrder: 0
+  icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
