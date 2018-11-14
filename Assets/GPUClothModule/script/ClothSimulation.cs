@@ -380,7 +380,7 @@ public class ClothSimulation : MonoBehaviour
     // ReSharper disable once InconsistentNaming
     private void Update()
     {
-        looper = 1;
+        
         if (!isInitialized) return;
         updateClothTrs();
         nodeUpdateComputeShader.SetBuffer(nodeUpdateComputeShaderHandle,"trsMatrix", trsBuffer);

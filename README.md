@@ -1,5 +1,7 @@
 # GPU Cloth Simulation
 
+![titleimage](./imgres/main.png)
+
 This repository is about GPU based Mass-Spring Simuation in Unity. This project is a sub project of [ReclothSimulation-master](), some of features are removed.  
 
 - Mass Spring System Cloth
@@ -15,7 +17,7 @@ Currently Confirmed working on following platforms:
 
 ## How to use
 
-Create a empty GameObject on hierarchy panel and append [ClothSimuation]("../Assets/GPUClothModule/script/ClothSimulation.cs") and [ClothRenderer]("../Assets/GPUClothModule/script/ClothRenderer.cs") scripts on it. Since this simulation calculates with its own system, you'll need special materials and dedicated shaders for rendering. There are two example materials(Face Normal Rendering, Diffuse Rendering).
+Create a empty GameObject on hierarchy panel and append [ClothSimuation](../Assets/GPUClothModule/script/ClothSimulation.cs) and [ClothRenderer](../Assets/GPUClothModule/script/ClothRenderer.cs) scripts on it. Since this simulation calculates with its own system, you'll need special materials and dedicated shaders for rendering. There are two example materials(Face Normal Rendering, Diffuse Rendering).
 
 ### Attributes
 
