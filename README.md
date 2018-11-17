@@ -2,7 +2,9 @@
 
 ![titleimage](./imgres/main.png)
 
-This repository is about GPU based Mass-Spring Simuation in Unity. This project is a sub project of [ReclothSimulation-master](), some of features are removed.  
+This repository is about GPU based Mass-Spring Simuation in Unity. Based upon Compute Shader, calculates physics in parallel.  
+
+This project is a sub project of [ReclothSimulation-master](), some of features are removed.  
 
 - Mass Spring System Cloth
 - ~~Inter Object Collision-Response~~
@@ -51,16 +53,38 @@ External Force|external forces such as wind, water etc. since it is public membe
 
 #### Cloth Renderer
 
-### recommended parameters
+attributes|description
+---|---
+Mat|a material for Cloth Object.
+LightGameObject|a light-type Gameobject, especially for diffuse rendering. Directional light recommended.
+MeshTopology|which element to draw Cloth: currently triangles supported, but you can write your own shader for others.
+
+### Caveats
 
 Since the simulation is not pretty stable, certain values for the clothSimulation scripts are recommended:
+
+#### recommended parameters of Attribute of Cloth
 
 attributes|values
 ---|---
 vertexColumn|8 ~ 64
 vertexRow|8 ~ 64
-Looper|20 ~ 500
-Damping|100~200
+Looper|20 ~ 500, larger values for more stable simulation
+
+#### recommended parameters of Constant of Cloth
+
+attributes|values
+---|---
+SpringK|10000~ 50000, but for a non-elastic behaving typical cloth, values around 35000 is recommeded
+Damping|100~200, can be vary by SpringK
+
+#### recommended parameters of Cloth Renderer
+
+attributes|values
+---|---
+Mat|requires custom shaders, look at the [normalShader]() and [DifwithShadows]() in [shader->render]()  directory.
+LightGameObject|Directional Light is highly recommended
+MeshTopology|You can use all of MeshTopology types, but you should write your own shaders. The embedded two shaders use MeshTopology.Triangles.
 
 ## Contact
 
