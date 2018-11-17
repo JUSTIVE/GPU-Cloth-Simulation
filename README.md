@@ -4,7 +4,7 @@
 
 This repository is about GPU based Mass-Spring Simuation in Unity. Based upon Compute Shader, calculates physics in parallel.  
 
-This project is a sub project of [ReclothSimulation-master](), some of features are removed.  
+This project is a sub project of ReclothSimulation-master, a private repository, some of features are removed in this repo.  
 
 - Mass Spring System Cloth
 - ~~Inter Object Collision-Response~~
@@ -19,7 +19,7 @@ Currently Confirmed working on following platforms:
 
 ## How to use
 
-Create a empty GameObject on hierarchy panel and append [ClothSimuation](../Assets/GPUClothModule/script/ClothSimulation.cs) and [ClothRenderer](../Assets/GPUClothModule/script/ClothRenderer.cs) scripts on it. Since this simulation calculates with its own system, you'll need special materials and dedicated shaders for rendering. There are two example materials(Face Normal Rendering, Diffuse Rendering).
+Create a empty GameObject on hierarchy panel and append [ClothSimuation](https://github.com/JUSTIVE/GPU-Cloth-Simulation/blob/master/Assets/GPUClothModule/script/ClothSimulation.cs) and [ClothRenderer](https://github.com/JUSTIVE/GPU-Cloth-Simulation/blob/master/Assets/GPUClothModule/script/ClothRenderer.cs) scripts on it. Since this simulation calculates with its own system, you'll need special materials and dedicated shaders for rendering. There are two example materials(Face Normal Rendering, Diffuse Rendering).
 
 ### Attributes
 
@@ -82,7 +82,7 @@ Damping|100~200, can be vary by SpringK
 
 attributes|values
 ---|---
-Mat|requires custom shaders, look at the [normalShader]() and [DifwithShadows]() in [shader->render]()  directory.
+Mat|requires custom shaders, look at the [normalShader](https://github.com/JUSTIVE/GPU-Cloth-Simulation/blob/master/Assets/GPUClothModule/shader/render/NormalShader.shader) and [DifwithShadows](https://github.com/JUSTIVE/GPU-Cloth-Simulation/blob/master/Assets/GPUClothModule/shader/render/DifWithShadows.shader) in [shader->render](https://github.com/JUSTIVE/GPU-Cloth-Simulation/tree/master/Assets/GPUClothModule/shader/render)  directory.
 LightGameObject|Directional Light is highly recommended
 MeshTopology|You can use all of MeshTopology types, but you should write your own shaders. The embedded two shaders use MeshTopology.Triangles.
 
