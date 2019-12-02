@@ -87,9 +87,13 @@ Mat|requires custom shaders, look at the [normalShader](https://github.com/JUSTI
 LightGameObject|Directional Light is highly recommended
 MeshTopology|You can use all of MeshTopology types, but you should write your own shaders. The embedded two shaders use MeshTopology.Triangles.
 
+## Performance
+
+Since this project uses Unity engine and GPU computing, it runs on most platforms, even mobile in real-time. But the performance heavily depends on the size of the model's triangles which you want to make it collided
+
 ## Contact
 
-you can contact Minsang Kim via e-mail(ben399399@gmail.com).
+You can contact Minsang Kim via e-mail(ben399399@gmail.com).
 
 ## License
 
