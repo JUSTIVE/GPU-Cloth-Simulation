@@ -1,7 +1,7 @@
 # GPU Cloth Simulation
-
-![titleimage](./imgres/main.png)
-![titleimage](./imgres/main2.png)
+cloth with force visualization|cloth with diffuse render
+:---:|:---:
+![titleimage](./imgres/main.png)|![titleimage](./imgres/main2.png)
 
 This repository is about GPU based Mass-Spring Simuation in Unity. Based upon Compute Shader, calculates physics in parallel.  
 
